@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>Meeting Assistant</string>
+	<key>CFBundleDisplayName</key>
+	<string>Meeting Assistant</string>
+	<key>CFBundleExecutable</key>
+	<string>MeetingAssistant</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.avinasx.meeting-assistant</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<!-- No Dock icon and no entry in the Cmd-Tab switcher. -->
+	<key>LSUIElement</key>
+	<true/>
+	<!-- macOS shows these texts in its permission prompts. Without them the
+	     system terminates the app when it asks for access. -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Meeting Assistant transcribes what you say so it can suggest answers during meetings.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Meeting Assistant turns the meeting audio and your microphone into a live transcript that is used to suggest answers.</string>
+</dict>
+</plist>

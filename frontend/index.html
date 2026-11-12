@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meeting Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header id="titlebar">
+    <button id="listen-toggle" class="status" title="Start or stop listening">
+      <span id="listen-dot" class="dot"></span>
+      <span id="listen-label">Not listening</span>
+    </button>
+    <span id="model-chip" class="chip" title="Model in use"></span>
+    <span class="spacer"></span>
+    <button id="open-settings" class="icon" title="Settings">⚙</button>
+    <button id="hide-window" class="icon" title="Hide">–</button>
+    <button id="quit-app" class="icon" title="Quit">×</button>
+  </header>
+
+  <div id="notice" class="notice" hidden></div>
+
+  <!-- ===================== main view ===================== -->
+  <main id="main-view">
+    <div class="actions">
+      <button id="help-button" class="primary">
+        <span>Help</span>
+        <kbd id="help-hotkey"></kbd>
+      </button>
+      <form id="ask-form" autocomplete="off">
+        <input id="ask-input" type="text" placeholder="…or type a question" spellcheck="false">
+        <button id="ask-send" type="submit" class="icon" title="Ask">↑</button>
+      </form>
+    </div>
+
+    <section id="answer-section">
+      <div id="answer-meta" class="meta">
+        <span id="answer-title"></span>
+        <span class="spacer"></span>
+        <button id="answer-stop" class="link" hidden>Stop</button>
+      </div>
+      <div id="answer" class="answer">
+        <p class="placeholder">Press <strong>Help</strong> and I'll look at your screen and the conversation so far, then tell you what to say.</p>
+      </div>
+      <div id="answer-notice" class="meta warn" hidden></div>
+    </section>
+
+    <section id="transcript-section">
+      <div class="meta">
+        <button id="transcript-toggle" class="link">Transcript ▾</button>
+        <span id="transcript-count"></span>
+        <span class="spacer"></span>
+        <button id="transcript-clear" class="link">Clear</button>
+      </div>
+      <div id="transcript" class="transcript"></div>
+    </section>
+  </main>
+
+  <!-- ===================== settings view ===================== -->
+  <main id="settings-view" hidden>
+    <form id="settings-form" autocomplete="off">
+
+      <h2>AI model</h2>
+      <label class="row">
+        <span>Provider</span>
+        <select id="set-provider">
+          <option value="gemini">Google Gemini</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="openai">OpenAI / compatible</option>
+        </select>
+      </label>
+      <label class="row">
+        <span>API key</span>
+        <span class="grow inline">
+          <input id="set-api-key" type="password" spellcheck="false">
+          <button id="set-clear-key" type="button" class="link" hidden>Remove</button>
+        </span>
+      </label>
+      <label class="row">
+        <span>Model</span>
+        <span class="grow inline">
+          <input id="set-model" type="text" spellcheck="false" placeholder="model id">
+          <button id="set-load-models" type="button" class="link">Load list</button>
+        </span>
+      </label>
+      <label class="row" id="set-model-pick-row" hidden>
+        <span></span>
+        <select id="set-model-pick"></select>
+      </label>
+      <div id="set-model-status" class="hint" hidden></div>
+      <label class="row">
+        <span>Base URL</span>
+        <input id="set-base-url" type="text" spellcheck="false" placeholder="default">
+      </label>
+      <label class="row" id="set-reasoning-row">
+        <span>Thinking</span>
+        <select id="set-reasoning">
+          <option value="">Provider default</option>
+          <option value="low">Low (fastest)</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+      <label class="row">
+        <span>Max answer tokens</span>
+        <input id="set-max-tokens" type="number" min="0" step="1" placeholder="0 = provider default">
+      </label>
+
+      <h2>How to answer</h2>
+      <textarea id="set-answer-prompt" rows="5" spellcheck="false"
+        placeholder="Describe how answers should be given: tone, length, format, your role…"></textarea>
+
+      <h2>Context files</h2>
+      <p class="hint">Sent with every request: resume, notes, product docs. Text, Markdown, code, CSV, JSON, PDF, DOCX and RTF.</p>
+      <ul id="set-files" class="files"></ul>
+      <button id="set-add-files" type="button">Add files…</button>
+
+      <h2>Listening</h2>
+      <label class="check"><input id="set-capture-system" type="checkbox"> Meeting audio (what others say)</label>
+      <label class="check"><input id="set-capture-mic" type="checkbox"> Microphone (what I say)</label>
+      <label class="check"><input id="set-auto-listen" type="checkbox"> Start listening when the app opens</label>
+      <label class="row">
+        <span>Language</span>
+        <select id="set-language"></select>
+      </label>
+      <label class="row">
+        <span>Transcript sent</span>
+        <span class="grow inline"><input id="set-transcript-minutes" type="number" min="1" max="180" step="1"> <span class="hint">minutes</span></span>
+      </label>
+      <label class="check"><input id="set-include-screenshot" type="checkbox"> Send a screenshot of my screen with each request</label>
+
+      <h2>Window</h2>
+      <label class="check"><input id="set-stealth" type="checkbox"> Hide this window from screen sharing and recording</label>
+      <div class="inline">
+        <button id="set-stealth-test" type="button">Test hiding</button>
+        <span class="hint">Flashes the window pink and makes it capturable for about a second. Don't run it while sharing.</span>
+      </div>
+      <div id="set-stealth-result" class="hint" hidden></div>
+      <label class="row">
+        <span>Opacity</span>
+        <input id="set-opacity" type="range" min="0.25" max="1" step="0.01">
+      </label>
+      <label class="row">
+        <span>Show / hide</span>
+        <input id="set-hotkey-toggle" type="text" spellcheck="false" placeholder="cmd+shift+backslash">
+      </label>
+      <label class="row">
+        <span>Help hotkey</span>
+        <input id="set-hotkey-help" type="text" spellcheck="false" placeholder="cmd+shift+return">
+      </label>
+
+      <h2>Permissions</h2>
+      <ul id="set-permissions" class="files"></ul>
+
+      <p id="set-path" class="hint"></p>
+      <div id="set-error" class="notice" hidden></div>
+      <div class="buttons">
+        <button id="set-cancel" type="button">Close</button>
+        <button id="set-save" type="submit" class="primary">Save</button>
+      </div>
+    </form>
+  </main>
+
+</div>
+<script src="md.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
